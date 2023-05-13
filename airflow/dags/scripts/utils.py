@@ -11,7 +11,7 @@ import pandas as pd
 import math
 import os
 
-def scrape_data(url, increment : int = 37, results_per_page):
+def scrape_data(url, increment : int = 37, results_per_page : int = 36):
 
     driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()))
     driver.get(url)
@@ -34,26 +34,19 @@ def scrape_data(url, increment : int = 37, results_per_page):
         try:
             marca = soup.find('span', class_ = 'showcase-item-brand')
             produto = soup.find('a', class_ = 'showcase-item-title')
-            preco_inicial = soup.find('div', class_ = 'item-price-max')
-            preco_aplicado = soup.find('span', class_ = 'price-value')
-            vegano = soup.find('span', class_ ='showcase-label-dynamic showcase-label-vegano')
+            preco = soup.find('span', class_ = 'price-value')
             descricao = soup.find('p', class_ = 'showcase-item-description')
-            novidade = soup.find('span', class_ = 'showcase-label-dynamic showcase-label-novidade')
-            cruelty_free = soup.find('span', class_ = 'showcase-label-dynamic showcase-label-cruelty-free')
 
             marca = str(marca)
             produto = str(produto)
             preco_inicial = str(preco_inicial)
-            preco_aplicado = str(preco_aplicado)
-            vegano = str(vegano)
+            preco = str(preco)
             descricao = str(descricao)
-            novidade = str(novidade)
-            cruelty_free = str(cruelty_free)
 
             temp_dict = {'marca' : marca,
                     'produto' : produto,
                     'preco_inicial' : preco_inicial,
-                    'preco_aplicado' : preco_aplicado,
+                    'preco' : preco,
                     'descricao' : descricao,
                     'vegano' : vegano,
                     'cruelty_free' : cruelty_free,
@@ -67,6 +60,6 @@ def scrape_data(url, increment : int = 37, results_per_page):
 
     driver.close()
 
-    raw_data.to_csv('opt/airflow/data/raw_data.csv')~
+    raw_data.to_csv('opt/airflow/data/raw_data.csv')
 
     return 0
