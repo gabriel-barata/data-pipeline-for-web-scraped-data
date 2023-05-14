@@ -5,6 +5,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium import webdriver
+import geckodriver_autoinstaller
 from dotenv import load_dotenv
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -13,7 +14,11 @@ import os
 
 def scrape_data(url, increment : int = 37, results_per_page : int = 36):
 
-    driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()))
+    geckodriver_autoinstaller.install()
+
+    options = webdriver.FirefoxOptions()
+    options.headless = True 
+    driver = webdriver.Firefox(options=options)
     driver.get(url)
 
     nres = int(driver.find_element(By.XPATH, '//p[@class="pagination-total"]//strong').text)
@@ -47,10 +52,8 @@ def scrape_data(url, increment : int = 37, results_per_page : int = 36):
                     'produto' : produto,
                     'preco_inicial' : preco_inicial,
                     'preco' : preco,
-                    'descricao' : descricao,
-                    'vegano' : vegano,
-                    'cruelty_free' : cruelty_free,
-                    'novidade' : novidade}
+                    'descricao' : descricao
+            }
 
             temp = pd.DataFrame(temp_dict, index = [0])
             raw_data = pd.concat([raw_data, temp], axis = 0)

@@ -1,5 +1,16 @@
 FROM apache/airflow:2.5.0
+
+USER root
+RUN apt-get update \
+    && apt-get install -y gnupg2 wget
+
+RUN apt install -y flatpak
+RUN flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+RUN flatpak install -y flathub org.mozilla.firefox
+
+USER airflow
+
 COPY requirements.txt /requirements.txt
-RUN pip install --user --upgrade pip
-RUN pip cache purge
-RUN pip install --user --no-cache-dir -r /requirements.txt
+RUN pip install --user --upgrade pip \
+    && pip cache purge \
+    && pip install --user --no-cache-dir -r /requirements.txt
