@@ -15,7 +15,7 @@ import os
 
 def scrape_data(url, increment : int = 37, results_per_page : int = 36):
 
-    binary = FirefoxBinary('/var/lib/flatpak/app/org.mozilla.firefox/x86_64/stable/3d0b2ca2b49b01730902343cbce5960f0ab5d212b1076cf3d11d543d2b3fd1bf/files/bin/firefox')
+    binary = FirefoxBinary('/usr/bin/firefox-esr')
     options = webdriver.FirefoxOptions()
     options.headless = True
     options.binary = binary
