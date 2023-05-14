@@ -3,10 +3,15 @@ FROM apache/airflow:2.5.0
 USER root
 RUN apt-get update \
     && apt-get install -y gnupg2 wget
+RUN apt-get install debianutils
 
-RUN apt install -y flatpak
+RUN apt install -y flatpak && apt install -y wget
 RUN flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-RUN flatpak install -y flathub org.mozilla.firefox
+RUN flatpak install -y flathub org.mozilla.firefox 
+RUN chmod +x /var/lib/flatpak/app/org.mozilla.firefox/x86_64/stable/3d0b2ca2b49b01730902343cbce5960f0ab5d212b1076cf3d11d543d2b3fd1bf/files/bin/firefox
+RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.32.0/geckodriver-v0.32.0-linux64.tar.gz
+RUN tar -xzvf geckodriver-v0.32.0-linux64.tar.gz -C /usr/local/bin
+RUN chmod +x /usr/local/bin/geckodriver
 
 USER airflow
 
