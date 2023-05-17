@@ -4,10 +4,19 @@ USER root
 RUN apt-get update \
     && apt-get install -y gnupg2 wget
 
-RUN apt install -y flatpak
-RUN flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-RUN flatpak install -y flathub org.mozilla.firefox
+#installing firefox-esr
+RUN apt install -y firefox-esr
+RUN chmod +x /usr/bin/firefox-esr
 
+#installing geckodriver
+RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.32.0/geckodriver-v0.32.0-linux64.tar.gz
+RUN tar -xzvf geckodriver-v0.32.0-linux64.tar.gz -C /usr/local/bin
+RUN chmod +x /usr/local/bin/geckodriver
+
+RUN mkdir -p /.cache \
+    && chmod 777 /.cache 
+
+#installing python requirements
 USER airflow
 
 COPY requirements.txt /requirements.txt
