@@ -12,8 +12,6 @@ default_args = {
     'retry_delay' : timedelta(minutes = 2)
 }
 
-driver = webdriver.Chrome(ChromeDriverManager().install())
-
 with DAG(
 
     dag_id = "web-scraped-data-dag",
