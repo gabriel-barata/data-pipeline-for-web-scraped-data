@@ -1,6 +1,6 @@
 resource "aws_security_group" "rds-acess" {
 
-    egress {
+    ingress {
 
         from_port = 5432
         to_port = 5432
@@ -42,5 +42,6 @@ output "username" {
 output "password" {
 
     value = aws_db_instance.rds-postgres-instance.password
+    sensitive = true
   
 }

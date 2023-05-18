@@ -4,3 +4,4 @@ airflow/dags/__pycache__
 /airflow/data/*
 /terraform/.terraform
 /terraform/.terraform.lock.hcl
+/terraform/terraform.tfstate.backup
