@@ -1,6 +1,7 @@
+from airflow.providers.postgres.operators.postgres import PostgresOperator
+from scripts.utils import scrape_data, concat_data, clean_data
 from airflow.operators.python_operator import PythonOperator
 from datetime import datetime, timedelta
-from scripts.utils import scrape_data, concat_data, clean_data
 from airflow import DAG
 
 default_args = {
@@ -15,7 +16,8 @@ with DAG(
     dag_id = "web-scraping-dag",
     start_date = datetime(2023, 1, 5),
     catchup = False,
-    schedule = "@once",
+    schedule_interval = "@once",
+    template_searchpath = '/otp/airflow/dags/scripts/sql/',
     default_args = default_args
 
 ) as dag:
@@ -88,8 +90,26 @@ with DAG(
 
     )
 
+    create_table = PostgresOperator( 
+
+        task_id = 'create-table',
+        postgres_conn_id = 'airflow-RDS',
+        sql = 'create-table.sql',
+        autocommit = True
+
+    )
+
+    insert_values = PostgresOperator(
+
+        task_id = 'insert-values',
+        postgres_conn_id = 'airflow-RDS',
+        sql = 'insert-values.sql',
+        autocommit = True
+    
+    )
+
 scrape_data_1 >> data_concat
 scrape_data_2 >> data_concat
 scrape_data_3 >> data_concat
 scrape_data_4 >> data_concat
-data_concat >> clean_data
+data_concat >> clean_data >> create_table >> insert_values

@@ -1,0 +1,1 @@
+COPY tbHairProd (id, product, description, price, vol) FROM 'opt/airflow/data/staging/cleaned_data.csv' WITH (FORMAT CSV, QUOTE '\"')

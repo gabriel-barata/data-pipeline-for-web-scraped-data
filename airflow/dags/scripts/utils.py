@@ -7,6 +7,7 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 import pandas as pd
 import numpy as np
+import psycopg2
 import math
 import os
 import re
@@ -40,17 +41,17 @@ def scrape_data(url, table_name : str, increment : int = 37, results_per_page : 
         try:
             brand = soup.find('span', class_ = 'showcase-item-brand')
             product = soup.find('a', class_ = 'showcase-item-title')
-            price = soup.find('span', class_ = 'price-value')
+            preco = soup.find('span', class_ = 'preco-value')
             descr = soup.find('p', class_ = 'showcase-item-description')
 
             brand = str(brand)
             product = str(product)
-            price = str(price)
+            preco = str(preco)
             descr = str(descr)
 
             temp_dict = {'brand' : brand,
                     'product' : product,
-                    'price' : price,
+                    'preco' : preco,
                     'descr' : descr
             }
 
@@ -58,7 +59,7 @@ def scrape_data(url, table_name : str, increment : int = 37, results_per_page : 
             data = pd.concat([data, temp], axis = 0)
 
         except Exception as e:
-            print(f"-failed to load div : {e}")
+            pass
 
     driver.close()
 
@@ -67,7 +68,7 @@ def scrape_data(url, table_name : str, increment : int = 37, results_per_page : 
     return 0
 
 #Concatening the scraped data
-def concat_data(table_name : str, path : str = '/opt/airflow/data/raw'):
+def concat_data(table_name : str, path : str = '/opt/airflow/data/raw/'):
 
     data = pd.DataFrame()
     files = os.listdir(path)
@@ -91,13 +92,13 @@ def clean_data(file_name, path : str = '/opt/airflow/data/raw/'):
         data[str(column)] = data[str(column)].apply(lambda x : x.split('<')[0] if len(x.split('<')) > 1 else x)
         data[str(column)] = data[str(column)].apply(lambda x : x.strip() if type(x) == str else x)
 
-    data['volumetria'] = data['product'].apply(lambda x : x[-5:])
-    data['volumetria'] = data['volumetria'].apply(lambda x : re.sub('^\D*', '', x))
+    data['vol'] = data['product'].apply(lambda x : x[-5:])
+    data['vol'] = data['vol'].apply(lambda x : re.sub('^\D*', '', x))
 
-    data['price'] = data['price'].apply(lambda x : x.replace('R$', ''))
-    data['price'] = data['price'].apply(lambda x : x.replace('.', ''))
-    data['price'] = data['price'].apply(lambda x : x.replace(',', '.'))
-    data['price'] = data['price'].apply(lambda x : np.nan if x == 'None' else float(x))
+    data['preco'] = data['preco'].apply(lambda x : x.replace('R$', ''))
+    data['preco'] = data['preco'].apply(lambda x : x.replace('.', ''))
+    data['preco'] = data['preco'].apply(lambda x : x.replace(',', '.'))
+    data['preco'] = data['preco'].apply(lambda x : np.nan if x == 'None' else float(x))
 
     data['product'] = data['product'].apply(lambda x : x.split('-')[0] if len(x.split('-')) > 1 else x)
 
@@ -110,7 +111,7 @@ def clean_data(file_name, path : str = '/opt/airflow/data/raw/'):
 
     data['product'] = data['product'].apply(lambda x : x.replace(';', ''))
 
-    cleaned_data = data[['product', 'brand', 'descr', 'price', 'vol']]
+    cleaned_data = data[['product', 'brand', 'descr', 'preco', 'vol']]
     
     cleaned_data.to_csv('/opt/airflow/data/staging/cleaned_data.csv')
 
