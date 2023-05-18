@@ -113,6 +113,6 @@ def clean_data(file_name, path : str = '/opt/airflow/data/raw/'):
 
     cleaned_data = data[['product', 'brand', 'descr', 'preco', 'vol']]
     
-    cleaned_data.to_csv('/opt/airflow/data/staging/cleaned_data.csv')
+    cleaned_data.to_csv('/opt/airflow/data/staging/cleaned_data.csv', header = False, index = False)
 
     return 0
