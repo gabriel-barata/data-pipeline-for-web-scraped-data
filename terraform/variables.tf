@@ -1,20 +1,20 @@
 variable "username" {
 
-    default = "daniella"
-    type = string
-  
+  default = "daniella"
+  type    = string
+
 }
 
 variable "password" {
 
-    type = string
-    sensitive = true
-  
+  type    = string
+  default = "daniella"
+
 }
 
 variable "proj-name" {
 
-    default = "web-scraping-data-platform"
-    type = string
+  default = "web-scraping-data-platform"
+  type    = string
 
 }
